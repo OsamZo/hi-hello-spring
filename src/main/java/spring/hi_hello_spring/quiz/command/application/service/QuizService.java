@@ -38,7 +38,7 @@ public class QuizService {
 
     /* 카테고리 별 퀴즈 수정 */
     @Transactional
-    public QuizUpdateDTO updateQuiz(Long quizCategorySeq, Long quizSeq, QuizUpdateDTO updateDTO){
+    public QuizUpdateDTO updateQuiz(Long quizSeq, Long quizCategorySeq, QuizUpdateDTO updateDTO){
 
         QuizCategory quizCategory = quizCategoryRepository.findById(quizCategorySeq)
                 .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
@@ -53,5 +53,24 @@ public class QuizService {
         modelMapper.map(updateDTO, quiz);
 
         return modelMapper.map(quiz, QuizUpdateDTO.class);
+    }
+
+    /* 카테고리 별 퀴즈 삭제 */
+    @Transactional
+    public boolean deleteQuiz(Long quizSeq, Long quizCategorySeq){
+
+        QuizCategory quizCategory = quizCategoryRepository.findById(quizCategorySeq)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리를 찾을 수 없습니다."));
+
+        Quiz quiz = quizRepository.findById(quizSeq)
+                .orElseThrow(() -> new IllegalArgumentException("해당 퀴즈를 찾을 수 없습니다."));
+
+        if(!quiz.getQuizCategorySeq().equals(quizCategory.getQuizCategorySeq())){
+            throw new IllegalArgumentException("해당 퀴즈는 주어진 카테고리에 속하지 않습니다.");
+        }
+
+        quizRepository.delete(quiz);
+
+        return true;
     }
 }

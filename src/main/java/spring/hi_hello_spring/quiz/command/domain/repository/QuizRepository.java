@@ -8,4 +8,6 @@ public interface QuizRepository {
     Quiz save(Quiz quiz);
 
     Optional<Quiz> findById(Long quizSeq);
+
+    void delete(Quiz quiz);
 }

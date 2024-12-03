@@ -34,7 +34,16 @@ public class QuizController {
                                      @PathVariable Long quizSeq,
                                      QuizUpdateDTO quizUpdateDTO){
 
-        quizService.updateQuiz(quizCategorySeq, quizSeq, quizUpdateDTO);
+        quizService.updateQuiz( quizSeq, quizCategorySeq, quizUpdateDTO);
         return ResponseUtil.successResponse("퀴즈가 성공적으로 수정 되었습니다.").getBody();
+    }
+
+    /* 카테고리 별 퀴즈 삭제 */
+    @DeleteMapping("/{quizCategorySeq}/quiz/{quizSeq}")
+    @Operation(summary = "카테고리 별 퀴즈 삭제", description = "카테고리별 퀴즈 삭제 로직입니다.")
+    public ApiResponse<?> deleteQuiz(@PathVariable Long quizCategorySeq, @PathVariable Long quizSeq){
+
+        quizService.deleteQuiz(quizSeq, quizCategorySeq);
+        return ResponseUtil.successResponse("퀴즈가 성공적으로 삭제 되었습니다.").getBody();
     }
 }
