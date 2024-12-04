@@ -40,4 +40,61 @@
         JOIN template t ON os.template_seq = t.template_seq
         ) t ON e.employee_seq = t.employee_seq
     </select>
+
+    <select id="findMentorTaskDetail" resultType="TaskMentorDetailQueryDTO">
+        SELECT
+        a.task_seq,
+        a.task_type,
+        t.template_seq,
+        t.template_title,
+        t.template_url,
+        a.task_content,
+        d.department_name,
+        t.template_end_at,
+        e.employee_name AS mentor_name,
+        mt.mentee_seq,
+        em.mentee_name,
+        el.eval_list_seq,
+        el.eval_list_content,
+        el.eval_list_score
+        FROM task a
+        JOIN department d
+        ON a.department_seq = d.department_seq
+        JOIN employee e
+        ON d.department_seq = e.department_seq
+        JOIN eval_list el
+        ON a.task_seq = el.task_seq
+        LEFT JOIN (
+        SELECT
+        m.mentor_seq,
+        m.mentee_seq
+        FROM mentoring m
+        ) mt
+        ON e.employee_seq = mt.mentor_seq
+        LEFT JOIN (
+        SELECT
+        e.employee_seq AS mentee_seq,
+        e.employee_name AS mentee_name
+        FROM employee e
+        ) em
+        ON mt.mentee_seq = em.mentee_seq
+        LEFT JOIN (
+        SELECT
+        os.employee_seq,
+        t.template_seq,
+        t.template_title,
+        t.template_url,
+        t.template_end_at
+        FROM onboarding_status os
+        JOIN template t
+        ON os.template_seq = t.template_seq
+        ) t
+        ON em.mentee_seq = t.employee_seq
+        WHERE e.employee_seq = #{employee_seq}
+        AND a.task_seq = #{task_seq}
+    </select>
+
+
+
+
 </mapper>
