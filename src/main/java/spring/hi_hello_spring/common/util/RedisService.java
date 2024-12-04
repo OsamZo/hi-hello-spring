@@ -13,18 +13,18 @@ public class RedisService {
     private final RedisTemplate<String, String> redisTemplate;
 
     // 리프레시 토큰을 디코딩하고 Redis 에 TTL 을 설정하여 저장
-    public void saveRefreshToken(String employeeSeq, String refreshToken, Long ttl) {
+    public void saveToken(String employeeSeq, String Token, Long ttl) {
         
-        redisTemplate.opsForValue().set(employeeSeq, refreshToken, ttl, java.util.concurrent.TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(employeeSeq, Token, ttl, java.util.concurrent.TimeUnit.SECONDS);
     }
 
     // 리프레시 토큰 조회
-    public String getRefreshToken(String employeeSeq) {
+    public String getToken(String employeeSeq) {
         return redisTemplate.opsForValue().get(employeeSeq);
     }
 
     // 리프레시 토큰 삭제
-    public void deleteRefreshToken(String employeeSeq) {
+    public void deleteToken(String employeeSeq) {
         redisTemplate.delete(employeeSeq);
     }
 }

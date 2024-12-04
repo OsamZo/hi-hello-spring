@@ -1,13 +1,13 @@
 package spring.hi_hello_spring.security.util;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,12 +20,16 @@ import org.springframework.stereotype.Component;
 import spring.hi_hello_spring.common.exception.CustomException;
 import spring.hi_hello_spring.common.exception.ErrorCodeType;
 import spring.hi_hello_spring.common.util.RedisService;
+import spring.hi_hello_spring.employee.command.application.service.EmployeeService;
 import spring.hi_hello_spring.employee.command.domain.aggregate.entity.Employee;
 import spring.hi_hello_spring.employee.command.domain.repository.EmployeeRepository;
 import spring.hi_hello_spring.security.service.CustomUserDetailsService;
 
 import java.security.Key;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,6 +39,7 @@ public class JwtUtil {
     private final Key key;
     private final CustomUserDetailsService userDetailsService;
     private final RedisService redisService;
+    private final EmployeeService employeeService;
 
     private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
     private final EmployeeRepository employeeRepository;
@@ -42,13 +47,14 @@ public class JwtUtil {
 
     public JwtUtil(
             @Value("${TOKEN_SECRET}") String secretKey,
-            CustomUserDetailsService userDetailsService, RedisService redisService,
+            CustomUserDetailsService userDetailsService, RedisService redisService, EmployeeService employeeService,
             @Qualifier("employeeRepository") EmployeeRepository employeeRepository) {
         this.redisService = redisService;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.userDetailsService = userDetailsService;
         this.employeeRepository = employeeRepository;
+        this.employeeService = employeeService;
     }
 
     /* accessToken 검증(Bearer 토큰이 넘어왔고, 우리 사이트의 secret key로 만들어 졌는가, 만료되었는지와 내용이 비어있진 않은지) */
@@ -57,17 +63,9 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token {}", e);
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token {}", e);
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token {}", e);
-        } catch (IllegalArgumentException e) {
-            log.info("JWT Token claims empty {}", e);
+        } catch (Exception e) {
+            return false;
         }
-
-        return false;
     }
 
     /* refreshToken 검증(Bearer 토큰이 넘어왔고, 우리 사이트의 secret key로 만들어 졌는가, 만료되었는지와 내용이 비어있진 않은가
@@ -84,33 +82,21 @@ public class JwtUtil {
             String EmployeeSeqInRefreshToken = getEmployeeSeq(refreshToken);
 
             // 레디스에 저장된 해당 사원이 이전에 발급 받았던 리프레시 토큰 조회
-            savedToken = redisService.getRefreshToken(EmployeeSeqInRefreshToken);
-
-            // 저장되어 있던 토큰의 담긴 값
-            String EmployeeSeqInRedisToken = getEmployeeSeq(savedToken);
-
-            if (refreshToken.equals(savedToken) && EmployeeSeqInRefreshToken.equals(EmployeeSeqInRedisToken)) {
-                return true;
+            savedToken = redisService.getToken(EmployeeSeqInRefreshToken);
+            if (savedToken != null) {
+                // 저장되어 있던 토큰의 담긴 값
+                String EmployeeSeqInRedisToken = getEmployeeSeq(savedToken);
+                if (refreshToken.equals(savedToken) && EmployeeSeqInRefreshToken.equals(EmployeeSeqInRedisToken)) {
+                    return true;
+                }
             }
 
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+        } catch (Exception e) {
             log.info("Invalid JWT Token {}", e);
             // 로그아웃 처리 및 레디스 내의 토큰 삭제
-
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token {}", e);
-            // 로그아웃 처리 및 레디스 내의 토큰 삭제
-
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token {}", e);
-            // 로그아웃 처리 및 레디스 내의 토큰 삭제
-
-        } catch (IllegalArgumentException e) {
-            log.info("JWT Token claims empty {}", e);
-            // 로그아웃 처리 및 레디스 내의 토큰 삭제
-
+            employeeService.logout(null);
+            return false;
         }
-
         return false;
     }
 
@@ -231,8 +217,8 @@ public class JwtUtil {
         return generateAccessToken(getEmployeeSeq(refreshToken), authentication);
     }
 
-    // 생성된 리프레시 토큰 레디스에 저장
-    public void saveRefreshToken(String refreshToken) {
+    // 생성된 토큰 레디스에 저장
+        public void saveToken(String refreshToken) {
 
         String employeeSeq = getEmployeeSeq(refreshToken);
         // JWT 디코딩하여 만료 시간 가져오기
@@ -247,7 +233,7 @@ public class JwtUtil {
 
         // 현재 시간과 만료 시간을 비교하여 TTL 계산
         long ttl = exp - (System.currentTimeMillis() / 1000);
-        redisService.saveRefreshToken(employeeSeq, refreshToken, ttl);
+        redisService.saveToken(employeeSeq, refreshToken, ttl);
     }
 
 }

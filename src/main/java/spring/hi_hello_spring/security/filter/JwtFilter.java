@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import spring.hi_hello_spring.employee.command.application.service.EmployeeService;
 import spring.hi_hello_spring.security.util.JwtUtil;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class JwtFilter extends OncePerRequestFilter {
     };
 
     private final JwtUtil jwtUtil;
+    private final EmployeeService employeeService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -53,14 +55,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
             jwtUtil.saveAuthentication(jwtUtil.getEmployeeSeq(newAccessToken));
 
+            // 재발급된 리프레시 토큰 레디스에 저장 (덮어쓰기)
+            jwtUtil.saveToken(newRefreshToken);
+
             filterChain.doFilter(request, response);
 
-            // 재발급된 리프레시 토큰 레디스에 저장 (덮어쓰기)
-            jwtUtil.saveRefreshToken(newRefreshToken);
-
-        } else {
-            // 로그아웃 처리 및 레디스 내 토큰 데이터 삭제
             return;
+
         }
 
         Optional<String> accessToken = jwtUtil.getToken(request, "access");
