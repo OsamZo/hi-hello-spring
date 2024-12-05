@@ -16,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import spring.hi_hello_spring.security.filter.CustomAuthenticationFilter;
+import spring.hi_hello_spring.security.filter.JwtFilter;
 import spring.hi_hello_spring.security.handler.JwtAccessDeniedHandler;
 import spring.hi_hello_spring.security.handler.JwtAuthenticationEntryPoint;
 import spring.hi_hello_spring.security.handler.LoginFailureHandler;

@@ -73,6 +73,18 @@ VALUES
     (1, '온보딩 퀴즈 질문2', FALSE, '정답 설명2', NOW()),
     (2, '직무 교육 퀴즈 질문1', TRUE, '정답 설명3', NOW());
 
+-- Quiz Result 데이터 삽입
+INSERT INTO quiz_result (quiz_seq, employee_seq, quiz_correct_status, reg_date)
+VALUES
+    -- 온보딩 퀴즈 1번을 맞춘 김멘티1
+    (1, 1, TRUE, NOW()),
+    -- 온보딩 퀴즈 2번을 틀린 김멘티2
+    (2, 2, FALSE, NOW()),
+    -- 직무 교육 퀴즈 1번을 맞춘 김멘티3
+    (3, 3, TRUE, NOW()),
+    -- 온보딩 퀴즈 1번을 틀린 김멘티4
+    (1, 4, FALSE, NOW());
+
 -- Task Group 데이터 삽입
 INSERT INTO task_group (task_seq, task_group_active_status, reg_date)
 VALUES

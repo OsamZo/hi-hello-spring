@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="spring.hi_hello_spring.quiz.query.mapper.QuizResultMapper">
+
+    <select id="findAllQuizResult" resultType="QuizResultAllQueryDTO">
+        SELECT
+            e.employee_num AS employeeNum,
+            e.employee_name AS employeeName,
+            d.department_name AS departmentName,
+            COUNT(qr.quiz_seq) AS quizQty,
+            SUM(CASE WHEN qr.quiz_correct_status = TRUE THEN 1 ELSE 0 END) AS quizCorrectQty
+        FROM
+            quiz_result qr
+            INNER JOIN
+            employee e ON qr.employee_seq = e.employee_seq
+            INNER JOIN
+            department d ON e.department_seq = d.department_seq
+            INNER JOIN
+            quiz q ON qr.quiz_seq = q.quiz_seq
+        WHERE
+            q.quiz_category_seq = #{quizCategorySeq}
+        GROUP BY
+            e.employee_num, e.employee_name, d.department_name
+    </select>
+</mapper>

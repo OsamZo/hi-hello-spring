@@ -1,7 +1,6 @@
 package spring.hi_hello_spring.security.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,12 +9,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import spring.hi_hello_spring.common.exception.CustomException;
 import spring.hi_hello_spring.common.exception.ErrorCodeType;
@@ -23,14 +19,12 @@ import spring.hi_hello_spring.common.util.RedisService;
 import spring.hi_hello_spring.employee.command.application.service.EmployeeService;
 import spring.hi_hello_spring.employee.command.domain.aggregate.entity.Employee;
 import spring.hi_hello_spring.employee.command.domain.repository.EmployeeRepository;
+import spring.hi_hello_spring.security.entity.CustomUserDetails;
 import spring.hi_hello_spring.security.service.CustomUserDetailsService;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -60,12 +54,25 @@ public class JwtUtil {
     /* accessToken 검증(Bearer 토큰이 넘어왔고, 우리 사이트의 secret key로 만들어 졌는가, 만료되었는지와 내용이 비어있진 않은지) */
     public boolean validateAccessToken(String accessToken) {
 
+        accessToken = accessToken.replaceAll("\\s+", "");
+        System.out.println("엑세스 토큰 " + accessToken);
+
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
             return true;
-        } catch (Exception e) {
-            return false;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("Invalid JWT Token {}", e);
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT Token {}", e);
+        } catch (UnsupportedJwtException e) {
+            log.info("Unsupported JWT Token {}", e);
+        } catch (IllegalArgumentException e) {
+            log.info("JWT Token claims empty {}", e);
         }
+//        catch (Exception e) {
+//            return false;
+//        }
+        return false;
     }
 
     /* refreshToken 검증(Bearer 토큰이 넘어왔고, 우리 사이트의 secret key로 만들어 졌는가, 만료되었는지와 내용이 비어있진 않은가
@@ -98,33 +105,6 @@ public class JwtUtil {
             return false;
         }
         return false;
-    }
-
-    /* 넘어온 AccessToken으로 인증 객체 추출 */
-    public Authentication getAuthentication(String token) {
-
-        /* 토큰을 들고 왔던 들고 오지 않았던(로그인 시) 동일하게 security 가 관리할 UserDetails 타입을 정의 */
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getEmployeeSeq(token));
-
-        /* 토큰에서 claim들 추출 */
-        Claims claims = parseClaims(token);
-        log.info("넘어온 AccessToken claims 확인: {}", claims);
-
-        Collection<? extends GrantedAuthority> authorities = null;
-        if (claims.get("auth") == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
-        } else {
-            /* 클레임에서 권한 정보 가져오기 */
-            authorities =
-                    Arrays.stream(claims.get("auth").toString()
-                                    .replace("[", "")
-                                    .replace("]", "")
-                                    .split(", "))
-                            .map(SimpleGrantedAuthority::new)
-                            .collect(Collectors.toList());
-        }
-
-        return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
     /* Token 에서 Claims 추출 */
@@ -182,7 +162,7 @@ public class JwtUtil {
 
         String authorizationHeader;
         if (tokenType.equals("refresh")) authorizationHeader = request.getHeader("refreshToken");
-        else authorizationHeader = request.getHeader("accessToken");
+        else authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return Optional.of(authorizationHeader.substring(7));
@@ -191,12 +171,12 @@ public class JwtUtil {
     }
 
     // authentication 저장
-    public void saveAuthentication(String userId) {
-        System.out.println("UserId: " + userId);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+    public void saveAuthentication(Long employeeSeq) {
+        System.out.println("employeeSeq: " + employeeSeq);
+        CustomUserDetails customUserDetails = userDetailsService.loadUserBySeq(employeeSeq);
         Authentication authentication =
-                new UsernamePasswordAuthenticationToken(userDetails, null,
-                        authoritiesMapper.mapAuthorities(userDetails.getAuthorities()));
+                new UsernamePasswordAuthenticationToken(customUserDetails, null,
+                        authoritiesMapper.mapAuthorities(customUserDetails.getAuthorities()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
@@ -209,23 +189,23 @@ public class JwtUtil {
                 .orElseThrow(() -> new CustomException(ErrorCodeType.USER_NOT_FOUND));
 
         // 새로운 액세스 토큰 생성
-        UserDetails userDetails = userDetailsService.loadUserByUsername(findUser.getEmployeeNum());
+        CustomUserDetails customUserDetails = userDetailsService.loadUserByUsername(findUser.getEmployeeNum());
         Authentication authentication =
-                new UsernamePasswordAuthenticationToken(userDetails, null,
-                        authoritiesMapper.mapAuthorities(userDetails.getAuthorities()));
+                new UsernamePasswordAuthenticationToken(customUserDetails, null,
+                        authoritiesMapper.mapAuthorities(customUserDetails.getAuthorities()));
 
         return generateAccessToken(getEmployeeSeq(refreshToken), authentication);
     }
 
     // 생성된 토큰 레디스에 저장
-        public void saveToken(String refreshToken) {
+        public void saveToken(String Token) {
 
-        String employeeSeq = getEmployeeSeq(refreshToken);
+        String employeeSeq = getEmployeeSeq(Token);
         // JWT 디코딩하여 만료 시간 가져오기
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJws(refreshToken)
+                .parseClaimsJws(Token)
                 .getBody();
 
         // 만료 시간 (exp는 Unix timestamp 형식)
@@ -233,7 +213,7 @@ public class JwtUtil {
 
         // 현재 시간과 만료 시간을 비교하여 TTL 계산
         long ttl = exp - (System.currentTimeMillis() / 1000);
-        redisService.saveToken(employeeSeq, refreshToken, ttl);
+        redisService.saveToken(employeeSeq, Token, ttl);
     }
 
 }

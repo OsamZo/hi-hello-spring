@@ -27,4 +27,8 @@ public class Wiki extends BaseTimeEntity {
         this.wikiTitle = wikiTitle;
         this.wikiCurrentVer = wikiCurrentVer;
     }
+
+    public void updateWikiCurrentVer(int wikiCurrentVer) {
+        this.wikiCurrentVer = wikiCurrentVer;
+    }
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Template extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long templateSeq;
 
     private Long quizCategorySeq;
@@ -37,6 +37,8 @@ public class Template extends BaseTimeEntity {
     private String templateUrl;
 
     private int templateQuizQty;
+
+    private String templateTaskRound;
 
     private int templateProcedure;
 

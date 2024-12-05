@@ -27,7 +27,6 @@ public class JwtFilter extends OncePerRequestFilter {
     };
 
     private final JwtUtil jwtUtil;
-    private final EmployeeService employeeService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -53,7 +52,7 @@ public class JwtFilter extends OncePerRequestFilter {
             log.info("accessToken {} ", newAccessToken);
             log.info("refreshToken {} ", newRefreshToken);
 
-            jwtUtil.saveAuthentication(jwtUtil.getEmployeeSeq(newAccessToken));
+            jwtUtil.saveAuthentication(Long.parseLong(jwtUtil.getEmployeeSeq(newAccessToken)));
 
             // 재발급된 리프레시 토큰 레디스에 저장 (덮어쓰기)
             jwtUtil.saveToken(newRefreshToken);
@@ -68,8 +67,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (accessToken.isPresent()) {
             if (jwtUtil.validateAccessToken(accessToken.get())){
-                jwtUtil.saveAuthentication(jwtUtil.getEmployeeSeq(accessToken.get()));
-                log.info("accessToken {} ", accessToken.get());
+                jwtUtil.saveAuthentication(Long.parseLong(jwtUtil.getEmployeeSeq(accessToken.get())));
+//                log.info("accessToken {} ", accessToken.get());
                 filterChain.doFilter(request, response); // 다음 필터로 요청 전달
                 return;
             }
