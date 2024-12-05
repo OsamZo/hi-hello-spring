@@ -4,7 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="spring.hi_hello_spring.evaluation.query.mapper.TaskQueryMapper">
 
-    <select id="findHrAllTask" resultType="TaskHrAllListQueryDTO">
+    <select id="findHrAllTask" resultType="TaskAllListQueryDTO">
         SELECT
         a.task_seq,
         a.department_seq,
@@ -40,6 +40,7 @@
         JOIN template t ON os.template_seq = t.template_seq
         ) t ON e.employee_seq = t.employee_seq
     </select>
+
 
     <select id="findMentorTaskDetail" resultType="TaskMentorDetailQueryDTO">
         SELECT
@@ -94,7 +95,42 @@
         AND a.task_seq = #{task_seq}
     </select>
 
-
-
+    <select id="findMentorAllTask" parameterType="java.lang.Long" resultType="TaskAllListQueryDTO">
+        SELECT
+        a.task_seq,
+        a.department_seq,
+        d.department_name,
+        e.employee_seq,
+        CASE
+        WHEN a.task_type = 'PERSONER' THEN e.employee_name
+        WHEN a.task_type = 'GROUP' THEN CAST(rt.group_rank AS CHAR)
+        END AS display_name,
+        a.task_content,
+        t.template_seq,
+        t.template_task_round
+        FROM task a
+        JOIN department d ON a.department_seq = d.department_seq
+        JOIN employee e ON d.department_seq = e.department_seq
+        LEFT JOIN (
+        SELECT
+        tg.task_seq,
+        tg.task_group_seq,
+        ROW_NUMBER() OVER (
+        PARTITION BY tg.task_seq
+        ORDER BY tg.task_group_seq
+        ) AS group_rank
+        FROM task_group tg
+        WHERE tg.task_group_active_status = 1
+        ) rt ON a.task_seq = rt.task_seq
+        t.template_task_round
+        FROM onboarding_status os
+        JOIN template t ON os.template_seq = t.template_seq
+        ) t ON e.employee_seq = t.employee_seq
+        WHERE a.department_seq = (
+        SELECT department_seq
+        FROM employee
+        WHERE employee_seq = #{employeeSeq}
+        )
+    </select>
 
 </mapper>

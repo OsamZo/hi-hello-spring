@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class TaskHrAllListQueryDTO {
+public class TaskAllListQueryDTO {
 
     private Long taskSeq;
     private Long departmentSeq;
