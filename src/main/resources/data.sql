@@ -146,3 +146,9 @@ INSERT INTO wiki_mod_content (wiki_seq, employee_seq, wiki_snapshot_seq, mod_con
 VALUES
     (1, 5, 1, '{"content": "온보딩 가이드 수정"}', NOW()),
     (2, 6, 1, '{"content": "직무 교육 매뉴얼 수정"}', NOW());
+
+-- Task Submit 데이터 삽입
+INSERT INTO task_submit (task_seq, employee_seq, task_submit_content)
+VALUES
+    (1, 1, "1차 과제 제출합니다."),
+    (1, 2, "제출합니다."),
