@@ -44,4 +44,14 @@ public class WikiQueryController {
         WikiQueryDTO wikiQueryDTO = wikiQueryService.getWikiByWikiSeq(wikiSeq);
         return ResponseUtil.successResponse("데이터가 성공적으로 조회되었습니다.", wikiQueryDTO).getBody();
     }
+
+    @GetMapping("/{wikiSeq}/ver/{wikiModContentSeq}")
+    @Operation(summary = "위키의 특정 버전 내용 조회", description = "위키의 특정 버전의 내용을 조회하는 로직입니다.")
+    public ApiResponse<?> getWikiByWikiModContentSeq(
+            @PathVariable("wikiSeq") Long wikiSeq,
+            @PathVariable("wikiModContentSeq") Long wikiModContentSeq
+    ) {
+        WikiQueryDTO wikiQueryDTO = wikiQueryService.getWikiByWikiSeqAndWikiModContentSeq(wikiSeq, wikiModContentSeq);
+        return ResponseUtil.successResponse("데이터가 성공적으로 조회되었습니다.", wikiQueryDTO).getBody();
+    }
 }

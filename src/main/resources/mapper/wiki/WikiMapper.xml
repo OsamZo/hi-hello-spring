@@ -40,7 +40,7 @@
             wiki_mod_content wm
         JOIN
             employee e ON wm.employee_seq = e.employee_seq
-        WHERE wm.wiki_seq = #{wiki_seq}
+        WHERE wm.wiki_seq = #{wikiSeq}
         ORDER BY reg_date DESC
     </select>
 
@@ -84,5 +84,47 @@
             wiki_mod_content
         ORDER BY wiki_mod_content_seq DESC
         LIMIT 1
+    </select>
+
+    <!--wikiModContentSeq 기준 가장 최신 snapshot 찾기(서브쿼리는 복원하고자 하는 위키의 version을 select)-->
+    <select id="findLatestWikiSnapshot" resultType="WikiSnapshotQueryDTO">
+        SELECT
+            wmc.wiki_seq,
+            w.wiki_title,
+            ws.wiki_snapshot_seq,
+            ws.wiki_snapshot_ver,
+            ws.wiki_snapshot_content
+        FROM
+            wiki_mod_content wmc
+        JOIN
+            wiki_snapshot ws ON wmc.wiki_snapshot_seq = ws.wiki_snapshot_seq
+        JOIN
+            wiki w ON w.wiki_seq = wmc.wiki_seq
+        WHERE
+            wmc.wiki_seq = #{wikiSeq}
+                AND ws.wiki_snapshot_ver &lt;=
+                    ((SELECT COUNT(*)
+                    FROM wiki_mod_content wmc_sub
+                    WHERE wmc_sub.wiki_seq = wmc.wiki_seq
+                        AND wmc_sub.wiki_mod_content_seq &lt;= #{wikiModContentSeq}) - 1) / 10 + 1
+        ORDER BY
+            ws.wiki_snapshot_ver DESC
+        LIMIT 1
+    </select>
+
+    <!--현재 조회하려는 버전 이전의 수정 리스트를 조회하는 SQL-->
+    <select id="findWikiModContentsLessThanWikiModContentSeq" resultType="WikiModContentQueryDTO">
+        SELECT
+            wiki_mod_content_seq,
+            wiki_seq,
+            wiki_snapshot_seq,
+            mod_content AS wiki_mod_content
+        FROM
+            wiki_mod_content
+        WHERE
+            wiki_seq = #{wikiSeq}
+            AND wiki_snapshot_seq = #{wikiSnapshotSeq}
+            AND wiki_mod_content_seq &lt;= #{wikiModContentSeq}
+        ORDER BY wiki_mod_content_seq
     </select>
 </mapper>

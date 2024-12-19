@@ -20,7 +20,7 @@ public class TaskEvalController {
 
     private final TaskEvalService taskEvalService;
 
-    @PostMapping("task-submit/{taskSubmitSeq}/task-eval")
+    @PostMapping("/task-submit/{taskSubmitSeq}/task-eval")
     @Operation(summary = "과제 평가 등록", description = "과제 평가 등록 로직입니다.")
     public ApiResponse<?> createTaskEval(
             @PathVariable("taskSubmitSeq") Long taskSubmitSeq,

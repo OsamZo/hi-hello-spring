@@ -107,7 +107,7 @@
                 (t.task_type = 'GROUP' AND m.mentee_seq = gm.employee_seq)
             )
         WHERE m.mentor_seq = #{mentor_seq} AND m.mentoring_active_status = TRUE
-        GROUP BY d.department_name, tem.template_task_round, submitter_seq, submitter_name, gm.employee_seq
+        GROUP BY d.department_name, tem.template_task_round, submitter_seq, submitter_name
     </select>
 
     <!--과제 평가 상세 내용을 조회하는 SQL-->
