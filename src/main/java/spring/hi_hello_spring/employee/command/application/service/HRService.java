@@ -29,8 +29,8 @@ public class HRService {
     @Transactional
     public void createEmpl(CreateEmplReqDTO createEmplReqDTO) {
 
-        Department department = departmentRepository.findByDepartmentName(createEmplReqDTO.getDepartment());
-        Position position = positionRepository.findByPositionName(createEmplReqDTO.getPosition());
+        Department department = departmentRepository.findByDepartmentName(createEmplReqDTO.getDepartmentName());
+        Position position = positionRepository.findByPositionName(createEmplReqDTO.getPositionName());
 
         String employeePassword = passwordEncoder.encode(createEmplReqDTO.getEmployeeNum());
 

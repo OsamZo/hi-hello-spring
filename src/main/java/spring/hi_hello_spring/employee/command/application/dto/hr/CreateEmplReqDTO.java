@@ -11,8 +11,8 @@ public class CreateEmplReqDTO {
 
     private String employeeNum;
     private String employeeName;
-    private String department;
-    private String position;
+    private String departmentName;
+    private String positionName;
     private String employeePhone;
     private String employeeEmail;
     private EmployeeRole employeeRole;
