@@ -51,12 +51,12 @@ VALUES
     ('테스트 완료', 2);
 
 -- Mentoring 데이터 삽입
-INSERT INTO mentoring (mentor_seq, mentee_seq, reg_date)
+INSERT INTO mentoring (mentor_seq, mentee_seq, chat_room_seq, reg_date)
 VALUES
-    (5, 1, NOW()),
-    (5, 2, NOW()),
-    (6, 3, NOW()),
-    (6, 4, NOW());
+    (5, 1, 1, NOW()),
+    (5, 2, 2, NOW()),
+    (6, 3, 3, NOW()),
+    (6, 4, 4, NOW());
 
 -- Planning 데이터 삽입
 INSERT INTO planning (employee_seq, planning_name, planning_content, planning_status, reg_date)
@@ -95,10 +95,10 @@ VALUES
     (1, 4, FALSE, NOW());
 
 -- Task Group 데이터 삽입
-INSERT INTO task_group (task_seq, task_group_active_status, reg_date)
+INSERT INTO task_group (task_seq, task_group_active_status, chat_room_seq, reg_date)
 VALUES
-    (1, TRUE, NOW()),
-    (2, TRUE, NOW());
+    (1, TRUE, 5, NOW()),
+    (2, TRUE, 6, NOW());
 
 -- Onboarding Status 데이터 삽입
 INSERT INTO onboarding_status (template_seq, employee_seq, onboarding_completed_status, reg_date)
