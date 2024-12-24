@@ -5,48 +5,54 @@
 <mapper namespace="spring.hi_hello_spring.onboarding.query.mapper.OnboardingMapper">
 
     <select id="getOnboardingListByMentee" parameterType="java.lang.Long" resultType="OnboardingDTO">
-        SELECT
-            e.employee_seq AS employeeSeq,
-            e.employee_name AS employeeName,
-            o.onboarding_status_seq AS onboardingStatusSeq,
-            o.onboarding_completed_status AS onboardingCompletedStatus,
-            t1.template_seq AS templateSeq,
-            t1.template_type AS templateType,
-            t1.template_check_required_status AS templateCheckRequiredStatus,
-            t1.template_training_type AS templateTrainingType,
-            t1.template_title AS templateTitle,
-            t1.template_sub AS templateSub,
-            t1.template_detail AS templateDetail,
-            t1.template_url_name AS templateUrlName,
-            t1.quiz_category_seq AS quizCategorySeq,
-            qc.quiz_category_name AS quizCategoryName,
-            t1.template_task_round AS templateTaskRound,
-            t2.task_seq AS taskSeq,
-            t2.task_title AS taskTitle,
-            t1.template_procedure AS templateProcedure,
-            t1.template_end_at AS templateEndAt,
-            cs.checklist_seq AS checklistSeq,
-            c.checklist_content AS checklistContent,
-            cs.list_checked_status AS listCheckedStatus,
-            cs.checklist_status_seq AS checklistStatusSeq
+        SELECT DISTINCT
+        e.employee_seq AS employeeSeq,
+        e.employee_name AS employeeName,
+        o.onboarding_status_seq AS onboardingStatusSeq,
+        o.onboarding_completed_status AS onboardingCompletedStatus,
+        t1.template_seq AS templateSeq,
+        t1.template_type AS templateType,
+        t1.template_check_required_status AS templateCheckRequiredStatus,
+        t1.template_training_type AS templateTrainingType,
+        t1.template_title AS templateTitle,
+        t1.template_sub AS templateSub,
+        t1.template_detail AS templateDetail,
+        t1.template_url_name AS templateUrlName,
+        t1.quiz_category_seq AS quizCategorySeq,
+        qc.quiz_category_name AS quizCategoryName,
+        t1.template_task_round AS templateTaskRound,
+        t2.task_seq AS taskSeq,
+        t2.task_title AS taskTitle,
+        t2.task_type AS taskType,
+        t1.template_procedure AS templateProcedure,
+        t1.template_end_at AS templateEndAt,
+        cs.checklist_seq AS checklistSeq,
+        c.checklist_content AS checklistContent,
+        cs.list_checked_status AS listCheckedStatus,
+        cs.checklist_status_seq AS checklistStatusSeq,
+        gm.task_group_seq AS taskGroupSeq
         FROM
-            employee AS e
+        employee AS e
         JOIN
-            onboarding_status AS o ON e.employee_seq = o.employee_seq
+        onboarding_status AS o ON e.employee_seq = o.employee_seq
+        JOIN
+        template AS t1 ON o.template_seq = t1.template_seq
         LEFT JOIN
-            template AS t1 ON o.template_seq = t1.template_seq
+        quiz AS q On t1.quiz_category_seq = q.quiz_category_seq
         LEFT JOIN
-            quiz AS q On t1.quiz_category_seq = q.quiz_category_seq
+        quiz_category AS qc ON q.quiz_category_seq = qc.quiz_category_seq
         LEFT JOIN
-            quiz_category AS qc ON q.quiz_category_seq = qc.quiz_category_seq
+        checklist AS c ON t1.template_seq = c.template_seq
         LEFT JOIN
-            checklist AS c ON t1.template_seq = c.template_seq
+        checklist_status AS cs ON c.checklist_seq = cs.checklist_seq
         LEFT JOIN
-            checklist_status AS cs ON c.checklist_seq = cs.checklist_seq
+        task AS t2 ON t1.template_seq = t2.template_seq
         LEFT JOIN
-            task AS t2 ON t1.template_seq = t2.template_seq
+        task_group AS tg ON t2.task_seq = tg.task_seq
+        LEFT JOIN
+        group_member AS gm ON tg.task_group_seq = gm.task_group_seq
         WHERE
-            e.employee_seq = #{employeeSeq}
+        e.employee_seq = #{employeeSeq}
         ORDER BY
         t1.template_procedure;
     </select>
@@ -74,29 +80,36 @@
         t1.template_end_at AS templateEndAt,
         cs.checklist_seq AS checklistSeq,
         c.checklist_content AS checklistContent,
-        cs.list_checked_status AS listCheckedStatus
+        cs.list_checked_status AS listCheckedStatus,
+        gm.task_group_seq AS taskGroupSeq
         FROM
-            mentoring AS m
+        mentoring AS m
         JOIN
-            employee AS e ON m.mentee_seq = e.employee_seq
+        employee AS e ON m.mentee_seq = e.employee_seq
         JOIN
-            onboarding_status AS o ON e.employee_seq = o.employee_seq
+        onboarding_status AS o ON e.employee_seq = o.employee_seq
         LEFT JOIN
-            template AS t1 ON o.template_seq = t1.template_seq
+        template AS t1 ON o.template_seq = t1.template_seq
         LEFT JOIN
-            quiz AS q On t1.quiz_category_seq = q.quiz_category_seq
+        quiz AS q On t1.quiz_category_seq = q.quiz_category_seq
         LEFT JOIN
-            quiz_category AS qc ON q.quiz_category_seq = qc.quiz_category_seq
+        quiz_category AS qc ON q.quiz_category_seq = qc.quiz_category_seq
         LEFT JOIN
-            checklist AS c ON t1.template_seq = c.template_seq
+        checklist AS c ON t1.template_seq = c.template_seq
         LEFT JOIN
-            checklist_status AS cs ON c.checklist_seq = cs.checklist_seq
+        checklist_status AS cs ON c.checklist_seq = cs.checklist_seq
         LEFT JOIN
-            task AS t2 ON t1.template_seq = t2.template_seq
+        task AS t2 ON t1.template_seq = t2.template_seq
+        LEFT JOIN
+        task_group AS tg ON t2.task_seq = tg.task_seq
+        LEFT JOIN
+        group_member AS gm ON tg.task_group_seq = gm.task_group_seq
         WHERE
-            m.mentor_seq = #{employeeSeq}
+        m.mentor_seq = #{employeeSeq}
         AND
-            m.mentoring_active_status = true
+        m.mentoring_active_status = true
+        ORDER BY
+        t1.template_procedure;
     </select>
 
     <select id="getCountStatus" parameterType="java.lang.Long" resultType="CompletedStatusDTO">

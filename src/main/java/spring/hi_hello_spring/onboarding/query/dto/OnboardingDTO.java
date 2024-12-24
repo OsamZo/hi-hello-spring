@@ -41,4 +41,5 @@ public class OnboardingDTO {
     private String checklistContent;
     private Long checklistStatusSeq;
     private boolean listCheckedStatus;
+    private Long taskGroupSeq;
 }
