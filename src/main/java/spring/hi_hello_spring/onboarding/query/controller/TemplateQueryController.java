@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import spring.hi_hello_spring.common.response.ApiResponse;
 import spring.hi_hello_spring.common.response.ResponseUtil;
 import spring.hi_hello_spring.onboarding.query.dto.TemplateAllQueryDTO;
+import spring.hi_hello_spring.onboarding.query.dto.TemplateTaskRoundDTO;
 import spring.hi_hello_spring.onboarding.query.service.TemplateQueryService;
 
 import java.util.List;
@@ -28,5 +29,13 @@ public class TemplateQueryController {
 
         List<TemplateAllQueryDTO> queryDTO = templateQueryService.getAllTemplate();
         return ResponseUtil.successResponse("온보딩 스토리 보드가 성공적으로 조회되었습니다.", queryDTO).getBody();
+    }
+
+    @GetMapping("/template")
+    @Operation(summary = "권한 별 과제 차수 조회", description = "과제 수정에 필요한 권한 별 템플릿 차수 조회 로직입니다.")
+    public ApiResponse<?> getTemplateTaskRound(){
+
+        List<TemplateTaskRoundDTO> templateTaskRoundDTO = templateQueryService.getTemplateTaskRound();
+        return ResponseUtil.successResponse("과제 권한 별 차수가 성공적으로 조회되었습니다.", templateTaskRoundDTO).getBody();
     }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 @Mapper
 public interface EmployeeMapper {
 
+
     List<MenteeAllQueryDTO> findAllMentee();
 
     List<MenteeDepQueryDTO> findMenteeByDep(Long departmentSeq);
@@ -31,4 +32,6 @@ public interface EmployeeMapper {
     List<DepartmentListDTO> findAllDepartment();
 
     List<MentorDepQueryDTO> findMentorByDep(Long departmentSeq);
+
+    EmployeeRoleDTO findEmployeeRole(Long currentEmployeeSeq);
 }

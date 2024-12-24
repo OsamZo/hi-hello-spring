@@ -221,4 +221,11 @@
         AND
         e.employee_role = "MENTOR"
     </select>
+
+    <select id="findEmployeeRole" parameterType="long" resultType="EmployeeRoleDTO">
+        SELECT
+        e.employee_role
+        FROM employee e
+        WHERE employee_seq = #{employeeSeq}
+    </select>
 </mapper>
