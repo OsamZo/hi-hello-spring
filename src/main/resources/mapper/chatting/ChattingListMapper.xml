@@ -4,9 +4,9 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="spring.hi_hello_spring.chatting.query.mapper.ChattingMapper">
 
-    <select id="findMentoringChatRoomByUserSeq" parameterType="Long" resultType="Long">
+    <select id="findMentoringChatRoomByUserSeq" parameterType="Long" resultType="String">
         SELECT
-            mentoring_seq
+            chat_room_seq
         FROM
             mentoring
         WHERE

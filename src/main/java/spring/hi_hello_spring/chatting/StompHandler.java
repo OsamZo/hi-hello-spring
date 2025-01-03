@@ -38,7 +38,7 @@ public class StompHandler implements ChannelInterceptor {
 
             // Authorization 헤더 값 확인
             String authorizationHeader = headerAccessor.getFirstNativeHeader("Authorization");
-
+            log.info("Authorization header: {}", authorizationHeader);
             // Authorization 헤더가 없거나 값이 비어있으면 예외 발생
             if (authorizationHeader == null || authorizationHeader.trim().isEmpty()) {
                 throw new MessageDeliveryException("Authorization header is missing or empty");

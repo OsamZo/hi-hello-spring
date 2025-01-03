@@ -20,7 +20,7 @@
             e.employee_role = "MENTEE"
     </select>
 
-    <!-- 해당 부서의 멘티를 조회하는 SQL   -->
+    <!-- 해당 부서의 매칭 전인 멘티를 조회하는 SQL   -->
     <select id="findMenteeByDep" parameterType="long" resultType="MenteeDepQueryDTO">
         SELECT
             e.employee_seq,
@@ -36,7 +36,33 @@
         WHERE
             e.department_seq = #{departmentSeq}
         AND
-            e.employee_role = "MENTEE"
+            e.employee_role = 'MENTEE'
+        AND
+        NOT EXISTS (
+            SELECT 1
+            FROM mentoring AS m
+            WHERE m.mentee_seq = e.employee_seq
+            AND m.mentoring_active_status = 1
+        );
+    </select>
+
+    <!-- 해당 부서의 매칭 전인 멘티를 조회하는 SQL   -->
+    <select id="findAllMenteeByDep" parameterType="long" resultType="MenteeDepQueryDTO">
+        SELECT
+        e.employee_seq,
+        e.employee_name,
+        e.employee_num,
+        d.department_name
+        FROM
+        employee AS e
+        JOIN
+        department AS d
+        ON
+        e.department_seq = d.department_seq
+        WHERE
+        e.department_seq = #{departmentSeq}
+        AND
+        e.employee_role = 'MENTEE'
     </select>
 
     <!-- 모든 멘토 데이터를 가져오는 SQL -->
@@ -107,6 +133,7 @@
     <!-- 멘티의 프로필 정보를 조회하는 SQL -->
     <select id="findMenteeInfo" parameterType="java.lang.Long" resultType="ResEmplInfoQueryDTO">
         SELECT
+            mentee.employee_seq AS employeeSeq,
             mentee.employee_name AS employeeName,
             mentee.employee_role AS employeeRole,
             mentee.employee_num AS employeeNum,
@@ -218,8 +245,13 @@
         e.department_seq = d.department_seq
         WHERE
         e.department_seq = #{departmentSeq}
-        AND
-        e.employee_role = "MENTOR"
+        AND e.employee_role = 'MENTOR'
+        AND NOT EXISTS (
+        SELECT 1
+        FROM mentoring AS m
+        WHERE m.mentor_seq = e.employee_seq
+        AND m.mentoring_active_status = 1
+        );
     </select>
 
     <select id="findEmployeeRole" parameterType="long" resultType="EmployeeRoleDTO">

@@ -19,7 +19,8 @@ public class ChattingQueryController {
     @GetMapping("/room/mentoring")
     @Operation(summary = "참여한 맨토링 채팅방 조회", description = "현재 사용자가 참여한 맨토링 채팅방을 반환합니다.")
     public ApiResponse<?> getUserMentoringChatRooms(@RequestParam Long userSeq) {
-        Long roomIds = chattingQueryService.getUserMentoringChatRooms(userSeq);
+        String roomIds = chattingQueryService.getUserMentoringChatRooms(userSeq);
+        System.out.println("방 Seq"+roomIds);
         return ResponseUtil.successResponse(roomIds).getBody();
     }
 

@@ -3,6 +3,7 @@ server:
   servlet:
     encoding:
       charset: UTF-8
+# 서버 포트 설정 (Nginx 포트와 동일하게)
   port: 5000
   address: 127.0.0.1
 
@@ -97,3 +98,19 @@ springdoc:
     tags-sorter: alpha
     operations-sorter: method
     doc-expansion: none
+
+#management:
+#  endpoint:
+#    metrics:
+#      enabled: true
+#    prometheus:
+#      enabled: true
+#
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health, info, metrics, prometheus
+#
+#  metrics:
+#    tags:
+#      application: ${SPRING_APPLICATION_NAME}

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,13 +25,14 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/hr/onboarding")
 @RequiredArgsConstructor
+@EnableScheduling
 @Tag(name = "Template API", description = "온보딩 스토리 보드 관련 API")
 public class TemplateController {
 
     private final TemplateService templateService;
     private final FileUploadUtil fileUploadUtil;
-    /* 온보딩 스토리보드 등록 */
 
+    /* 온보딩 스토리보드 등록 */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "온보딩 스토리 보드 생성", description = "온보딩 스토리 보드 생성 로직입니다.")
     public ApiResponse<?> createTemplate(@RequestPart("createDTO") @Validated TemplateCreateDTO createDTO,

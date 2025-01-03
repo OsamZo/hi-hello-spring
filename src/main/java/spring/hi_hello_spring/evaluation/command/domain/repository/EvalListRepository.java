@@ -16,4 +16,6 @@ public interface EvalListRepository {
     Optional<EvalList> findById(Long evalListSeq);
 
     List<EvalList> findByEvalIndSeq(Long evalIndSeq);
+
+    void deleteById(Long evalListSeq);
 }

@@ -56,9 +56,10 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER_NANE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER_NAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+#    command: ["--noauth"]
     volumes:
       - mongodb_data:/data/db
 

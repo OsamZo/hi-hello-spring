@@ -24,7 +24,7 @@ public class CheckListService {
         CheckListStatus checkListStatus = CheckListStatus.builder()
                 .checklistStatusSeq(checklistUpdateDTO.getChecklistStatusSeq())
                 .employeeSeq(employeeSeq)
-                .checklistSeq(checklistUpdateDTO.getChecklistStatusSeq())
+                .checklistSeq(checklistUpdateDTO.getChecklistSeq())
                 .listCheckedStatus(checklistUpdateDTO.getListCheckedStatus())
                 .build();
         checkListStatusRepository.save(checkListStatus);

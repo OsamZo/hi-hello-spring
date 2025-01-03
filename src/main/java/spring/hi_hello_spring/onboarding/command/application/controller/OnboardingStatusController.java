@@ -19,7 +19,7 @@ public class OnboardingStatusController {
     private final OnboardingStatusService onboardingStatusService;
 
     @Operation(summary = "(멘티) 온보딩 수행 상태 변경", description = "온보딩 수행 상태 변경 로직입니다.")
-    @PutMapping("mentee/onboarding/template/{templateSeq}/status")
+    @PutMapping("/mentee/onboarding/template/{templateSeq}/status")
     public ApiResponse<?> updateOnboardingStatus(@PathVariable Long templateSeq) {
 
         onboardingStatusService.updateOnboardingStatus(templateSeq);

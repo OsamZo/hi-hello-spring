@@ -5,5 +5,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ChecklistMapper {
 
-    Integer findUncheckedListByTemplateSeq(Long templateSeq);
+    Integer findUncheckedListByTemplateSeq(Long templateSeq, Long employeeSeq);
 }

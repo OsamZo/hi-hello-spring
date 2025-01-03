@@ -14,6 +14,7 @@ public class TaskEvalListQueryDTO {
     private Long templateSeq;
     private String templateTaskRound;
     private Long taskSubmitSeq;
+    private String taskType;
     private Long submitterSeq;
     private String submitterName;
     private Long taskSeq;

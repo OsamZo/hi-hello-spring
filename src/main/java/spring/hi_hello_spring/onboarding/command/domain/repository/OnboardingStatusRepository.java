@@ -5,12 +5,7 @@ import spring.hi_hello_spring.onboarding.command.domain.aggregate.entity.Onboard
 import java.util.Optional;
 
 public interface OnboardingStatusRepository {
-    
 
     OnboardingStatus save(OnboardingStatus onboardingStatus);
-
-
-
-
     Optional<OnboardingStatus> findByEmployeeSeqAndTemplateSeq(Long employeeSeq, Long templateSeq);
 }

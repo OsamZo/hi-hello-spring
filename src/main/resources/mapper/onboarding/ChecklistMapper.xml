@@ -13,6 +13,9 @@
             checklist c ON t.template_seq = c.template_seq
         JOIN
             checklist_status cs ON c.checklist_seq = cs.checklist_seq
-        WHERE t.template_seq = #{templateSeq} AND cs.list_checked_status = false
+        WHERE
+            t.template_seq = #{templateSeq}
+            AND cs.list_checked_status = false
+            AND cs.employee_seq = #{employeeSeq}
     </select>
 </mapper>

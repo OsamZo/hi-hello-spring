@@ -42,7 +42,7 @@ public class ChatController {
 
         message.setRoomId(roomId); // mongoDB에 저장
         ChatResponseMessage savedMessage = chatService.saveMessage(message);
-        log.info("Saved message: {}", savedMessage);
+        log.info("Saved message: {}", savedMessage.getMessage());
 
         // kafka로 메시지 전송
         kafkaProducerService.sendMessageToKafka(savedMessage);

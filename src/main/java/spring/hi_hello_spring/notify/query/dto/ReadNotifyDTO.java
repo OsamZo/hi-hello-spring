@@ -1,5 +1,6 @@
 package spring.hi_hello_spring.notify.query.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,6 @@ public class ReadNotifyDTO {
     private String notiContent;
     private String notiUrl;
     private boolean alarmReadStatus;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime regDate;
 }

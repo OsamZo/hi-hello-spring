@@ -84,4 +84,13 @@ public class EmployeeQueryService {
         }
         return mentorDepQueryDTO;
     }
+
+    public List<MenteeDepQueryDTO> getAllDepMentees(Long departmentSeq) {
+
+        List<MenteeDepQueryDTO>  menteeDepQueryDTO = employeeMapper.findAllMenteeByDep(departmentSeq);
+        if(menteeDepQueryDTO == null) {
+            throw new IllegalArgumentException("해당 부서의 멘티가 존재하지 않습니다");
+        }
+        return menteeDepQueryDTO;
+    }
 }

@@ -56,6 +56,9 @@ dependencies {
 
 	implementation 'software.amazon.awssdk:s3:2.20.87'
 
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 	implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
 	implementation 'org.hibernate:hibernate-core:6.5.3.Final'
 

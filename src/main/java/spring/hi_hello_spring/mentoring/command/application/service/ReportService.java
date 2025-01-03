@@ -30,8 +30,6 @@ public class ReportService {
     public final ReportRepository reportRepository;
     public final ModelMapper modelMapper;
     public final NotifyService notifyService;
-    public final EmployeeRepository employeeRepository;
-    private final LettuceConnectionFactory redisConnectionFactoryVirtualThreads;
 
     @Transactional
     public void createReport(Long employeeSeq, WriteReportDTO writeReportDTO) {
@@ -75,7 +73,7 @@ public class ReportService {
         Mentoring mentoring = mentoringRepository.findByMentoringSeq(report.getMentoringSeq());
 
         if (Objects.equals(employeeSeq, mentoring.getMentorSeq())) {
-            modelMapper.map(writeFeedbackDTO, report);
+            report.updateFeedbackContent(writeFeedbackDTO.getReportFeedbackContent());
             reportRepository.save(report);
         } else {
             throw new CustomException(ErrorCodeType.COMMON_ERROR);

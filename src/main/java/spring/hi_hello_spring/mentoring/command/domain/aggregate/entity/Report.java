@@ -37,4 +37,8 @@ public class Report extends BaseTimeEntity {
     public void forGroup(Long mentoringSeq) {
         this.mentoringSeq = mentoringSeq;
     }
+
+    public void updateFeedbackContent(String feedbackContent) {
+        this.reportFeedbackContent = feedbackContent;
+    }
 }

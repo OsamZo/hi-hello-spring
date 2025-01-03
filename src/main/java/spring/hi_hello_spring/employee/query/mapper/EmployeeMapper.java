@@ -15,6 +15,8 @@ public interface EmployeeMapper {
 
     List<MenteeDepQueryDTO> findMenteeByDep(Long departmentSeq);
 
+    List<MenteeDepQueryDTO> findAllMenteeByDep(Long departmentSeq);
+
     List<MentorAllQueryDTO> findAllMentor();
 
     ResEmplInfoQueryDTO findEmployeeInfo(Long employeeSeq);

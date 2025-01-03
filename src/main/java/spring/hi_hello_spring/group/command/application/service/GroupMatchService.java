@@ -26,25 +26,26 @@ public class GroupMatchService {
     private final ChatRoomService chatRoomService;
 
     @Transactional
-    public void createMenteeGroup(List<TaskRequestDTO> taskRequestDTO) {
+    public void createMenteeGroup(Long taskSeq, List<TaskRequestDTO> taskRequestDTO) {
         int groupNum = 1;
         for (TaskRequestDTO taskRequestDTOs : taskRequestDTO) {
             // TaskGroup 생성 및 저장
-            TaskGroup taskSeq = modelMapper.map(taskRequestDTOs, TaskGroup.class);
-            taskSeq.updateTaskGroupNum(groupNum++);
-            taskSeq.saveChatRoomSeq(UUID.randomUUID().toString());
-            taskSeq = taskGroupRepository.save(taskSeq);
-
+            TaskGroup taskGroup = modelMapper.map(taskRequestDTOs, TaskGroup.class);
+            taskGroup.updateTaskSeq(taskSeq); // taskSeq를 그룹에 연결
+            taskGroup.updateTaskGroupNum(groupNum++);
+            taskGroup.saveChatRoomSeq(UUID.randomUUID().toString());
+            taskGroup = taskGroupRepository.save(taskGroup);
 
             // GroupMember 추가
             for (MemberDTO memberDTO : taskRequestDTOs.getMembers()) {
-                GroupMember groupMember = new GroupMember(taskSeq.getTaskGroupSeq(), memberDTO.getEmployeeSeq());
+                GroupMember groupMember = new GroupMember(taskGroup.getTaskGroupSeq(), memberDTO.getEmployeeSeq());
                 groupMemberRepository.save(groupMember);
             }
 
             Long employeeSeq = CustomUserUtils.getCurrentEmployeeSeq();
-            chatRoomService.createGroupChatRoom(employeeSeq, taskSeq.getChatRoomSeq());
+            chatRoomService.createGroupChatRoom(employeeSeq, taskGroup.getChatRoomSeq());
         }
     }
+
 
 }

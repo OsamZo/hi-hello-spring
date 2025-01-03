@@ -49,4 +49,13 @@ public class EvalListService {
             throw new CustomException(ErrorCodeType.INVALID_VALUE);
         }
     }
+
+    @Transactional
+    public void deleteEvalList(Long evalListSeq) {
+        if(evalListRepository.existsById(evalListSeq)) {
+            evalListRepository.deleteById(evalListSeq);
+        }else{
+            throw new CustomException(ErrorCodeType.DATA_NOT_FOUND);
+        }
+    }
 }

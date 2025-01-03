@@ -47,7 +47,6 @@ public class ReportController {
 
 
         try {
-            System.out.println(writeFeedbackDTO.getReportFeedbackContent());
             reportService.writeFeedback(employeeSeq, reportSeq, writeFeedbackDTO);
             return ResponseUtil.successResponse("보고서 피드백이 반영되었습니다.").getBody();
         } catch (Exception e) {

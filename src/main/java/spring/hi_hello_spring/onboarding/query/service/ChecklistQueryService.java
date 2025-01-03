@@ -10,8 +10,8 @@ public class ChecklistQueryService {
 
     private final ChecklistMapper checklistMapper;
 
-    public boolean getChecklistStatusByTemplateSeq(Long templateSeq) {
-        int uncheckedListQty = checklistMapper.findUncheckedListByTemplateSeq(templateSeq);
+    public boolean getChecklistStatusByTemplateSeq(Long templateSeq, Long employeeSeq) {
+        int uncheckedListQty = checklistMapper.findUncheckedListByTemplateSeq(templateSeq, employeeSeq);
         return uncheckedListQty == 0;
     }
 }

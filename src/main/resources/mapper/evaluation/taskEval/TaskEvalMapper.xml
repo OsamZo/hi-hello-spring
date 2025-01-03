@@ -14,6 +14,7 @@
             t.template_seq,
             tem.template_task_round,
             ts.task_submit_seq,
+            t.task_type,
             CASE
                 WHEN t.task_type = 'GROUP' THEN tg.task_group_seq
                 WHEN t.task_type = 'PERSONAL' THEN e.employee_seq
@@ -63,6 +64,7 @@
             t.template_seq,
             tem.template_task_round,
             ts.task_submit_seq,
+            t.task_type,
             CASE
                 WHEN t.task_type = 'GROUP' THEN tg.task_group_seq
                 WHEN t.task_type = 'PERSONAL' THEN e.employee_seq

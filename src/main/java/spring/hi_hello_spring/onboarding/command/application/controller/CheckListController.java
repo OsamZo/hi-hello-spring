@@ -10,7 +10,7 @@ import spring.hi_hello_spring.onboarding.command.application.dto.CheckListUpdate
 import spring.hi_hello_spring.onboarding.command.application.service.CheckListService;
 
 @RestController
-@RequestMapping("api/v1/hr/onboarding")
+@RequestMapping("api/v1/onboarding")
 @RequiredArgsConstructor
 @Tag(name = "Template API", description = "온보딩 스토리 보드 관련 API")
 public class CheckListController {
@@ -18,9 +18,9 @@ public class CheckListController {
 
     @PutMapping("/checklist")
     @Operation(summary = "체크리스트 완료 업데이트", description = "체크리스트 완료 업데이트 로직입니다.")
-    public ApiResponse<?> createTemplate(@RequestBody CheckListUpdateDTO ChecklistUpdateDTO){
+    public ApiResponse<?> createTemplate(@RequestBody CheckListUpdateDTO checklistUpdateDTO){
 
-        checkListService.checkListUpdate(ChecklistUpdateDTO);
+        checkListService.checkListUpdate(checklistUpdateDTO);
         return ResponseUtil.successResponse("체크리스트 수행여부가 성공적으로 수정되었습니다.").getBody();
     }
 }

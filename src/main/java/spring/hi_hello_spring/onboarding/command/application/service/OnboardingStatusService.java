@@ -49,8 +49,6 @@ public class OnboardingStatusService {
 
         Mentoring mentoring = mentoringRepository.findByMentorSeqAndMentoringActiveStatusIsTrue(employeeSeq);
 
-        System.out.println("멘티 seq" + mentoring.getMenteeSeq());
-
         OnboardingStatus onboardingStatus = onboardingStatusRepository.findByEmployeeSeqAndTemplateSeq(mentoring.getMenteeSeq(), templateSeq)
                 .orElseThrow(() -> new CustomException(ErrorCodeType.DATA_NOT_FOUND));
 

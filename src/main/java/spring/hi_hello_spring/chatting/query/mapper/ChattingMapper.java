@@ -7,7 +7,7 @@ import java.util.List;
 @Mapper
 public interface ChattingMapper {
 
-    Long findMentoringChatRoomByUserSeq(Long userSeq);
+    String findMentoringChatRoomByUserSeq(Long userSeq);
 
     String findGroupingChatRoomsByUserSeq(Long userSeq);
 }

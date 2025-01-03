@@ -42,4 +42,8 @@ public class OnboardingDTO {
     private Long checklistStatusSeq;
     private boolean listCheckedStatus;
     private Long taskGroupSeq;
+
+    private Long fileSeq;
+    private String fileName;
+    private String fileUrl;
 }

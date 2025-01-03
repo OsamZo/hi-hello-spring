@@ -10,7 +10,7 @@ public class ChattingQueryService {
 
     private final ChattingMapper chattingMapper;
 
-    public Long getUserMentoringChatRooms(Long userSeq) {
+    public String getUserMentoringChatRooms(Long userSeq) {
         return chattingMapper.findMentoringChatRoomByUserSeq(userSeq);
     }
 

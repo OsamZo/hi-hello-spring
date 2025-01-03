@@ -12,6 +12,7 @@ import spring.hi_hello_spring.common.aggregate.entity.EmployeeRole;
 @ToString
 public class ResEmplInfoQueryDTO {
 
+    private Long employeeSeq;
     private String employeeName;
     private String employeeNum;
     @Enumerated(EnumType.STRING)

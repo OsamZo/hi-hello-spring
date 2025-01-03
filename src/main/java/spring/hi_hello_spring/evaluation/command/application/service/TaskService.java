@@ -19,6 +19,7 @@ import spring.hi_hello_spring.evaluation.command.domain.aggregate.entity.TaskTyp
 import spring.hi_hello_spring.evaluation.command.domain.repository.EvalListRepository;
 import spring.hi_hello_spring.evaluation.command.domain.repository.TaskRepository;
 import spring.hi_hello_spring.evaluation.command.domain.service.EvalListDomainService;
+import spring.hi_hello_spring.group.command.application.service.GroupMatchService;
 import spring.hi_hello_spring.onboarding.command.domain.aggregate.entity.Template;
 import spring.hi_hello_spring.onboarding.command.domain.repository.TemplateRepository;
 import spring.hi_hello_spring.onboarding.command.domain.service.TemplateDomainService;
@@ -35,9 +36,9 @@ public class TaskService {
     private final ModelMapper modelMapper;
     private final EvalListDomainService evalListDomainService;
     private final TemplateDomainService templateDomainService;
+    private final GroupMatchService groupMatchService;
 
     // 과제 등록
-    @Transactional
     public void createTask(TaskCreateDTO taskCreateDTO, String uploadFile) {
 
         Task task = Task.builder()
@@ -47,21 +48,28 @@ public class TaskService {
                 .taskTitle(taskCreateDTO.getTaskTitle())
                 .taskContent(taskCreateDTO.getTaskContent())
                 .build();
-        Task saveTask = taskRepository.save(task);
-        taskRepository.save(task);
+
+
+        Task savedTask = taskRepository.save(task);
+
+        if (savedTask.getTaskSeq() == null) {
+            throw new RuntimeException("taskSeq is null, task could not be saved properly.");
+        }
 
         if (uploadFile != null) {
             File file = File.builder()
-                    .taskSeq(saveTask.getTaskSeq())
+                    .taskSeq(savedTask.getTaskSeq())
                     .fileName(taskCreateDTO.getFileName())
                     .fileUrl(uploadFile)
                     .build();
             fileRepository.save(file);
         }
 
-        // EvalList 항목들 저장
-        evalListDomainService.createTask(taskCreateDTO,task);
+        evalListDomainService.createTask(taskCreateDTO, savedTask);
+
+        groupMatchService.createMenteeGroup(savedTask.getTaskSeq(), taskCreateDTO.getTasks().getTasks()); // passing taskSeq
     }
+
 
     // 과제 수정
     @Transactional

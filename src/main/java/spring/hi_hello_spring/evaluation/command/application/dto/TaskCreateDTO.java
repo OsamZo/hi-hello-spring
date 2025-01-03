@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import spring.hi_hello_spring.evaluation.command.domain.aggregate.entity.TaskType;
+import spring.hi_hello_spring.group.command.application.dto.TaskRequestWrapper;
 
 import java.util.List;
 
@@ -22,4 +23,5 @@ public class TaskCreateDTO {
 
     private List<EvalListCreateDTO> evalIndicators;
 
+    private TaskRequestWrapper tasks;
 }

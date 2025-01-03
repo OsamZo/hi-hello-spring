@@ -24,8 +24,8 @@
         WHERE
         tm.template_task_round IS NOT NULL
         AND (
-        (#{employeeRole} = 'mentor' AND tm.template_training_type = '심화교육')
-        OR (#{employeeRole} = 'hr' AND tm.template_training_type = '기본교육')
+        (#{employeeRole} = 'mentor' AND tm.template_training_type = 'JOB')
+        OR (#{employeeRole} = 'hr' AND tm.template_training_type = 'COMMON')
         );
     </select>
 </mapper>

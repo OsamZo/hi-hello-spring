@@ -32,11 +32,19 @@ public class EmployeeQueryController {
     }
 
     @GetMapping("/hr/mentee/{departmentSeq}")
-    @Operation(summary = "부서별 멘티 조회", description = "부서별 멘티 조회 로직 입니다.")
+    @Operation(summary = "부서별 멘토 없는 멘티 조회", description = "부서별 멘티 조회 로직 입니다.")
     public ApiResponse<?> getEmployeeByDepartmentSeq( @PathVariable Long departmentSeq) {
 
         List<MenteeDepQueryDTO> menteeDepQueryDTO = employeeQueryService.getDepMentees(departmentSeq);
         return ResponseUtil.successResponse("부서별 멘티 조회가 성공적으로 조회되었습니다.", menteeDepQueryDTO).getBody();
+    }
+
+    @GetMapping("/hr/task/mentee/{departmentSeq}")
+    @Operation(summary = "부서별 전체 멘티 조회", description = "부서별 멘티 조회 로직 입니다.")
+    public ApiResponse<?> getAllMenteeByDepartmentSeq( @PathVariable Long departmentSeq) {
+
+        List<MenteeDepQueryDTO> menteeDepQueryDTO = employeeQueryService.getAllDepMentees(departmentSeq);
+        return ResponseUtil.successResponse("부서별 전체 멘티 조회가 성공적으로 조회되었습니다.", menteeDepQueryDTO).getBody();
     }
 
     @GetMapping("/hr/mentor")
